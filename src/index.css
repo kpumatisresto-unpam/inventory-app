@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-background: oklch(1 0 0);
+  --color-foreground: oklch(0.145 0 0);
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.145 0 0);
+  --color-popover: oklch(1 0 0);
+  --color-popover-foreground: oklch(0.145 0 0);
+  --color-primary: oklch(0.455 0.188 248.68);
+  --color-primary-foreground: oklch(0.985 0 0);
+  --color-secondary: oklch(0.965 0.01 264);
+  --color-secondary-foreground: oklch(0.205 0.015 264);
+  --color-muted: oklch(0.965 0.01 264);
+  --color-muted-foreground: oklch(0.555 0.015 264);
+  --color-accent: oklch(0.965 0.01 264);
+  --color-accent-foreground: oklch(0.205 0.015 264);
+  --color-destructive: oklch(0.577 0.245 27.325);
+  --color-destructive-foreground: oklch(0.985 0 0);
+  --color-border: oklch(0.922 0.01 264);
+  --color-input: oklch(0.922 0.01 264);
+  --color-ring: oklch(0.455 0.188 248.68);
+  --radius: 0.625rem;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --animate-in: animate-in 0.3s ease-out;
+}
+
+/* Dark mode overrides */
+.dark {
+  --color-background: oklch(0.145 0.015 264);
+  --color-foreground: oklch(0.985 0 0);
+  --color-card: oklch(0.205 0.015 264);
+  --color-card-foreground: oklch(0.985 0 0);
+  --color-popover: oklch(0.205 0.015 264);
+  --color-popover-foreground: oklch(0.985 0 0);
+  --color-primary: oklch(0.555 0.188 248.68);
+  --color-primary-foreground: oklch(0.985 0 0);
+  --color-secondary: oklch(0.269 0.015 264);
+  --color-secondary-foreground: oklch(0.985 0 0);
+  --color-muted: oklch(0.269 0.015 264);
+  --color-muted-foreground: oklch(0.655 0.015 264);
+  --color-accent: oklch(0.269 0.015 264);
+  --color-accent-foreground: oklch(0.985 0 0);
+  --color-destructive: oklch(0.577 0.245 27.325);
+  --color-destructive-foreground: oklch(0.985 0 0);
+  --color-border: oklch(0.305 0.015 264);
+  --color-input: oklch(0.305 0.015 264);
+  --color-ring: oklch(0.555 0.188 248.68);
+}
+
+/* Base styles */
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Animations */
+@keyframes animate-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: animate-in 0.3s ease-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-foreground);
+}
+
+/* Touch optimizations for mobile */
+@media (max-width: 768px) {
+  button, a, input, select, textarea {
+    min-height: 44px;
+  }
+}

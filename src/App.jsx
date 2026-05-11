@@ -11,6 +11,7 @@ import HistoryPage from '@/pages/pencatat/HistoryPage'
 import ApprovalListPage from '@/pages/pengawas/ApprovalListPage'
 import ApprovalDetailPage from '@/pages/pengawas/ApprovalDetailPage'
 import ReportsPage from '@/pages/pengawas/ReportsPage'
+import UserManagementPage from '@/pages/pengawas/UserManagementPage'
 
 function RoleRedirect() {
   const { profile, loading } = useAuth()
@@ -51,6 +52,7 @@ function App() {
             <Route path="/pengawas/approval" element={<ApprovalListPage />} />
             <Route path="/pengawas/approval/:id" element={<ApprovalDetailPage />} />
             <Route path="/pengawas/reports" element={<ReportsPage />} />
+            <Route path="/pengawas/users" element={<UserManagementPage />} />
           </Route>
 
           {/* Catch all */}

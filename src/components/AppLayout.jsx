@@ -7,10 +7,11 @@ import {
   ClipboardList,
   LayoutDashboard,
   FileText,
-  ChevronLeft,
   Menu,
   X,
   Users,
+  PlusCircle,
+  History,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -29,11 +30,13 @@ export default function AppLayout() {
         { icon: Package, label: 'Data Barang', path: '/pengawas/items' },
         { icon: ClipboardList, label: 'Approval', path: '/pengawas/approval' },
         { icon: FileText, label: 'Laporan', path: '/pengawas/reports' },
+        { icon: Users, label: 'Pengguna', path: '/pengawas/users' },
       ]
     : [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/pencatat' },
         { icon: Package, label: 'Daftar Barang', path: '/pencatat/items' },
-        { icon: ClipboardList, label: 'Riwayat', path: '/pencatat/history' },
+        { icon: PlusCircle, label: 'Catat Baru', path: '/pencatat/new' },
+        { icon: History, label: 'Riwayat', path: '/pencatat/history' },
       ]
 
   const handleSignOut = async () => {

@@ -56,7 +56,9 @@ export default function UserManagementPage() {
     setSuccess('')
 
     try {
-      // Create auth user via Supabase Auth
+      // Buat auth user via Supabase Auth
+      // Data full_name & role dikirim lewat metadata → akan dibaca oleh database trigger
+      // yang otomatis insert ke public.users (tidak perlu insert manual)
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -71,22 +73,15 @@ export default function UserManagementPage() {
       if (authError) throw authError
       if (!authData.user) throw new Error('Gagal membuat akun')
 
-      // Insert into users table
-      const { error: insertError } = await supabase
-        .from('users')
-        .insert({
-          id: authData.user.id,
-          email: formData.email,
-          full_name: formData.full_name,
-          role: formData.role,
-        })
-
-      if (insertError) throw insertError
+      // Insert ke public.users DIHAPUS — sudah diurus oleh database trigger
+      // CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users ...
 
       setSuccess(`Akun ${formData.full_name} berhasil dibuat!`)
       setFormData({ email: '', password: '', full_name: '', role: 'pencatat' })
       setShowForm(false)
-      fetchUsers()
+
+      // Beri jeda singkat agar trigger sempat berjalan sebelum fetch
+      setTimeout(() => fetchUsers(), 800)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -102,7 +97,15 @@ export default function UserManagementPage() {
           <h1 className="text-2xl font-bold">Kelola Pengguna</h1>
           <p className="text-muted-foreground text-sm mt-0.5">{users.length} pengguna terdaftar</p>
         </div>
-        <Button onClick={() => { setShowForm(true); setError(''); setSuccess('') }} className="gap-2" id="add-user-button">
+        <Button
+          onClick={() => {
+            setShowForm(true)
+            setError('')
+            setSuccess('')
+          }}
+          className="gap-2"
+          id="add-user-button"
+        >
           <Plus className="w-4 h-4" />
           <span className="hidden sm:inline">Tambah</span>
         </Button>
@@ -134,7 +137,7 @@ export default function UserManagementPage() {
                   id="user_name"
                   placeholder="Nama lengkap pengguna"
                   value={formData.full_name}
-                  onChange={(e) => setFormData(p => ({ ...p, full_name: e.target.value }))}
+                  onChange={(e) => setFormData((p) => ({ ...p, full_name: e.target.value }))}
                   required
                 />
               </div>
@@ -145,7 +148,7 @@ export default function UserManagementPage() {
                   type="email"
                   placeholder="email@domain.com"
                   value={formData.email}
-                  onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))}
+                  onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
                   required
                 />
               </div>
@@ -157,7 +160,7 @@ export default function UserManagementPage() {
                   placeholder="Minimal 6 karakter"
                   minLength={6}
                   value={formData.password}
-                  onChange={(e) => setFormData(p => ({ ...p, password: e.target.value }))}
+                  onChange={(e) => setFormData((p) => ({ ...p, password: e.target.value }))}
                   required
                 />
               </div>
@@ -166,14 +169,19 @@ export default function UserManagementPage() {
                 <Select
                   id="user_role"
                   value={formData.role}
-                  onChange={(e) => setFormData(p => ({ ...p, role: e.target.value }))}
+                  onChange={(e) => setFormData((p) => ({ ...p, role: e.target.value }))}
                 >
                   <option value="pencatat">Pencatat (Maker)</option>
                   <option value="pengawas">Pengawas (Checker)</option>
                 </Select>
               </div>
               <div className="flex gap-2 pt-2">
-                <Button type="button" variant="outline" onClick={() => setShowForm(false)} className="flex-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowForm(false)}
+                  className="flex-1"
+                >
                   Batal
                 </Button>
                 <Button type="submit" disabled={saving} className="flex-1 gap-2">
@@ -189,7 +197,7 @@ export default function UserManagementPage() {
       {/* Users List */}
       {loading ? (
         <div className="space-y-3">
-          {[1, 2, 3].map(i => (
+          {[1, 2, 3].map((i) => (
             <div key={i} className="h-16 rounded-xl bg-muted/50 animate-pulse" />
           ))}
         </div>
@@ -203,12 +211,18 @@ export default function UserManagementPage() {
           {users.map((u) => (
             <Card key={u.id} className="hover:shadow-md transition-all duration-200">
               <CardContent className="p-4 flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                  u.role === 'pengawas'
-                    ? 'bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400'
-                    : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                }`}>
-                  {u.role === 'pengawas' ? <UserCheck className="w-5 h-5" /> : <UserPen className="w-5 h-5" />}
+                <div
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                    u.role === 'pengawas'
+                      ? 'bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400'
+                      : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                  }`}
+                >
+                  {u.role === 'pengawas' ? (
+                    <UserCheck className="w-5 h-5" />
+                  ) : (
+                    <UserPen className="w-5 h-5" />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{u.full_name}</p>
